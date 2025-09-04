@@ -17,6 +17,7 @@ import labs.pm.data.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Locale;
 
 public class Shop {
@@ -52,7 +53,7 @@ public class Shop {
         p5 = pm.reviewProduct(105, Rating.FOUR_STAR, "Good quality, but slightly overpriced.");
         p5 = pm.reviewProduct(105, Rating.FIVE_STAR, "Heavenly taste, highly recommended!");
         p5 = pm.reviewProduct(105, Rating.THREE_STAR, "Too sweet for me.");
-
+        /*
         pm.printProductReport(101);
         pm.changeLocale("ar-MA");
         pm.printProductReport(102);
@@ -62,5 +63,13 @@ public class Shop {
         pm.printProductReport(104);
         pm.changeLocale("en-GB");
         pm.printProductReport(105);
+
+         */
+        Comparator<Product> ratingSorter = (prd1, prd2)->prd2.getRating().ordinal()-prd1.getRating().ordinal();
+        Comparator<Product> priceSorter = (prd1,prd2)->prd2.getPrice().compareTo(prd1.getPrice());
+
+        pm.printProducts(ratingSorter.thenComparing(priceSorter));
+        pm.printProducts(ratingSorter.thenComparing(priceSorter).reversed());
+
     }
 }

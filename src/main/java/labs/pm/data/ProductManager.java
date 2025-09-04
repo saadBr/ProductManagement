@@ -138,4 +138,14 @@ public class ProductManager {
         }
         return product;
     }
+    public void printProducts(Comparator<Product> sorter) {
+        List<Product> productList = new ArrayList<>(products.keySet());
+        productList.sort(sorter);
+        StringBuilder txt = new StringBuilder();
+        for (Product product: productList) {
+            txt.append(formatter.formatProduct(product));
+            txt.append("\n");
+        }
+        System.out.println(txt);
+    }
 }
