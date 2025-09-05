@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 public class Shop {
     public static void main(String[] args) {
@@ -67,9 +68,12 @@ public class Shop {
          */
         Comparator<Product> ratingSorter = (prd1, prd2)->prd2.getRating().ordinal()-prd1.getRating().ordinal();
         Comparator<Product> priceSorter = (prd1,prd2)->prd2.getPrice().compareTo(prd1.getPrice());
-
-        pm.printProducts(ratingSorter.thenComparing(priceSorter));
-        pm.printProducts(ratingSorter.thenComparing(priceSorter).reversed());
-
+        Predicate<Product> priceFilter = (prd -> prd.getPrice().floatValue()<2);
+        pm.printProducts(priceFilter,ratingSorter.thenComparing(priceSorter));
+        pm.getDiscounts().forEach(
+                (rating,discount)->{
+                    System.out.println(rating+"\t"+discount);
+                }
+        );
     }
 }

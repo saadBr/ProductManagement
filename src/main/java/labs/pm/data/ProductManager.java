@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author saade
@@ -94,16 +96,17 @@ public class ProductManager {
         return reviewProduct(findProduct(id), rating, comment);
     }
     public Product reviewProduct(Product product, Rating rating, String comment) {
-//        review = new Review(rating, comment);
         List<Review> reviews = products.get(product);
         products.remove(product,reviews);
         reviews.add(new Review(rating, comment));
-        int sum = 0;
-        boolean reviewed = false;
-        for (Review review: reviews) {
-            sum += review.rating().ordinal();
-        }
-        product = product.applyRating(Reatable.convert(Math.round((float) sum / reviews.size())));
+        product = product.applyRating(Reatable.convert(
+                (int)Math.round(
+                        reviews.stream()
+                                .mapToInt(r->r.rating().ordinal())
+                                .average()
+                                .orElse(0)
+                )
+        ));
         products.put(product, reviews);
         return product;
     }
@@ -114,14 +117,12 @@ public class ProductManager {
         //format product
         txt.append(formatter.formatProduct(product));
         txt.append("\n");
-        for (Review review : reviews) {
-            //format review
-            txt.append(formatter.formatReview(review));
-            txt.append("\n");
-        }
         if (reviews.isEmpty()) {
-            txt.append(formatter.getText("no reviews"));
-            txt.append("\n");
+            txt.append(formatter.getText("no.reviews")).append("\n");
+        }
+        else {
+            txt.append(reviews.stream()
+                    .map(review -> formatter.formatReview(review)+"\n").collect(Collectors.joining()));
         }
         System.out.println(txt);
     }
@@ -129,23 +130,29 @@ public class ProductManager {
         printProductReport(findProduct(id));
     }
     public Product findProduct(int id) {
-        Product product = null;
-        for(Product p: products.keySet()) {
-            if(p.getId() == id) {
-                product = p;
-                break;
-            }
-        }
-        return product;
+        return products.keySet()
+                .stream()
+                .filter(product -> product.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
-    public void printProducts(Comparator<Product> sorter) {
-        List<Product> productList = new ArrayList<>(products.keySet());
-        productList.sort(sorter);
+    public void printProducts(Predicate<Product> filter,Comparator<Product> sorter) {
         StringBuilder txt = new StringBuilder();
-        for (Product product: productList) {
-            txt.append(formatter.formatProduct(product));
-            txt.append("\n");
-        }
+        products.keySet()
+                .stream()
+                .sorted(sorter)
+                .filter(filter)
+                .forEach(product -> {txt.append(formatter.formatProduct(product)).append("\n");});
         System.out.println(txt);
+    }
+    public Map<String, String> getDiscounts() {
+        return products.keySet()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        product -> product.getRating().getStars(),
+                        Collectors.collectingAndThen(Collectors.summingDouble(
+                                product -> product.getDiscount().doubleValue()),
+                                discount -> formatter.moneyFormat.format(discount)
+                        )));
     }
 }
