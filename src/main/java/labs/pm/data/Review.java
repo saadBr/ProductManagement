@@ -8,10 +8,12 @@
 
 package labs.pm.data;
 
+import java.io.Serializable;
+
 /**
  * @author saade
  **/
-public record Review(Rating rating, String comment) implements Comparable<Review> {
+public record Review(Rating rating, String comment) implements Comparable<Review>, Serializable {
 
 
     @Override

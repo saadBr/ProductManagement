@@ -24,15 +24,20 @@ import java.util.function.Predicate;
 public class Shop {
     public static void main(String[] args){
         ProductManager pm = new ProductManager("en-GB");
-        pm.parseProduct("D,101,Tea,1.99,0,2025-09-08");
         pm.printProductReport(101);
-        pm.parseReview("101,4,nice hot tea");
-        pm.parseReview("101,4,Nice hot cup of tea");
-        pm.parseReview("101,2,Rather weak tea");
-        pm.parseReview("101,4,Fine tea");
-        pm.parseReview("101,4,Good tea");
-        pm.parseReview("101,5,Perfect tea");
-        pm.parseReview("101,3,Just add some lemon");
+        pm.printProductReport(102);
+        pm.printProductReport(103);
+        pm.printProductReport(104);
+
+//        pm.parseProduct("D,101,Tea,1.99,0,2025-09-08");
+//        pm.printProductReport(101);
+//        pm.parseReview("101,4,nice hot tea");
+//        pm.parseReview("101,4,Nice hot cup of tea");
+//        pm.parseReview("101,2,Rather weak tea");
+//        pm.parseReview("101,4,Fine tea");
+//        pm.parseReview("101,4,Good tea");
+//        pm.parseReview("101,5,Perfect tea");
+//        pm.parseReview("101,3,Just add some lemon");
 //        Product p2 = pm.createProduct(102,"Coffee",BigDecimal.valueOf(1.99), Rating.NOT_RATED);
 //        p2 = pm.reviewProduct(102, Rating.FIVE_STAR, "Strong and rich flavor, just perfect!");
 //        p2 = pm.reviewProduct(102, Rating.THREE_STAR, "A bit too bitter for my taste.");
@@ -68,16 +73,10 @@ public class Shop {
         pm.printProductReport(105);
 
          */
-//        Comparator<Product> ratingSorter = (prd1, prd2)->prd2.getRating().ordinal()-prd1.getRating().ordinal();
-//        Comparator<Product> priceSorter = (prd1,prd2)->prd2.getPrice().compareTo(prd1.getPrice());
-//        Predicate<Product> priceFilter = (prd -> prd.getPrice().floatValue()<2);
-//        pm.printProducts(priceFilter,ratingSorter.thenComparing(priceSorter));
-//        pm.getDiscounts().forEach(
-//                (rating,discount)->{
-//                    System.out.println(rating+"\t"+discount);
-//                }
-//        );
-        pm.printProductReport(101);
-        pm.printProductReport(11);
+        Comparator<Product> ratingSorter = (prd1, prd2)->prd2.getRating().ordinal()-prd1.getRating().ordinal();
+        Comparator<Product> priceSorter = (prd1,prd2)->prd2.getPrice().compareTo(prd1.getPrice());
+        Predicate<Product> priceFilter = (prd -> prd.getPrice().floatValue()<2);
+        pm.printProducts(priceFilter,ratingSorter.thenComparing(priceSorter));
+
     }
 }
